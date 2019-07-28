@@ -1,0 +1,373 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.github.hal4j</groupId>
+	<artifactId>hal4j-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>HAL4J</name>
+	<description>
+        HAL specification implementation
+    </description>
+	<url>https://github.com/hal4j/hal4j</url>
+
+	<modules>
+        <module>hal4j-api</module>
+        <module>hal4j-jackson</module>
+        <module>hal4j-spring-web</module>
+        <module>hal4j-spring-zuul</module>
+	</modules>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+	<developers>
+		<developer>
+			<name>Ivan Gammel</name>
+			<email>oss@gammel.ru</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:hal4j/hal4j.git</connection>
+		<developerConnection>scm:git:git@github.com:hal4j/hal4j.git</developerConnection>
+		<url>git@github.com:hal4j/hal4j.git</url>
+  </scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <java.version>1.8</java.version>
+
+        <!-- data conversion -->
+        <resource4j.version>3.2.0</resource4j.version>
+
+        <!-- Logging -->
+		<slf4j.version>1.7.21</slf4j.version>
+		<logback.version>1.1.7</logback.version>
+
+        <!-- Testing -->
+        <junit-jupiter-engine.version>5.2.0</junit-jupiter-engine.version>
+        <uritemplate.version>1.1.0-SNAPSHOT</uritemplate.version>
+    </properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>6.1</version> <!-- Use newer version of ASM -->
+                    </dependency>
+                </dependencies>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version><!--$NO-MVN-MAN-VER$ -->
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <remoteTagging>false</remoteTagging>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+	   <profile>
+	       <id>quality-report</id>
+	       <activation>
+	           <property>
+	               <name>sqa</name>
+	               <value>true</value>
+	           </property>
+	       </activation>
+	       <build>
+	           <plugins>
+	               <plugin>
+	                   <groupId>org.apache.maven.plugins</groupId>
+	                   <artifactId>maven-surefire-plugin</artifactId>
+	                   <version>2.19.1</version>
+	                   <configuration>
+	                       <argLine>${surefireArgLine}</argLine>
+	                   </configuration>
+	               </plugin>
+	               <plugin>
+	                   <groupId>org.apache.maven.plugins</groupId>
+	                   <artifactId>maven-failsafe-plugin</artifactId>
+	                   <version>2.19.1</version>
+	                   <executions>
+	                       <execution>
+	                           <goals>
+	                               <goal>integration-test</goal>
+	                               <goal>verify</goal>
+	                           </goals>
+	                       </execution>
+	                   </executions>
+	                   <configuration>
+	                       <argLine>${failsafeArgLine}</argLine>
+	                   </configuration>
+	               </plugin>
+	               <plugin>
+	                   <groupId>org.jacoco</groupId>
+	                   <artifactId>jacoco-maven-plugin</artifactId>
+	                   <version>0.7.6.201602180812</version>
+	                   <executions>
+	                       <execution>
+	                           <id>pre-unit-test</id>
+	                           <goals>
+	                               <goal>prepare-agent</goal>
+	                           </goals>
+	                           <configuration>
+	                               <destFile>/${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+	                               <propertyName>surefireArgLine</propertyName>
+	                           </configuration>
+	                       </execution>
+	                       <execution>
+	                           <id>post-unit-test</id>
+	                           <phase>test</phase>
+	                           <goals>
+	                               <goal>report</goal>
+	                           </goals>
+	                           <configuration>
+	                               <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+	                               <outputDirectory>${project.build.directory}/jacoco-ut</outputDirectory>
+	                           </configuration>
+	                       </execution>
+                           <execution>
+                               <id>pre-integration-test</id>
+                               <goals>
+                                   <goal>prepare-agent</goal>
+                               </goals>
+                               <configuration>
+                                   <destFile>/${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+                                   <propertyName>failsafeArgLine</propertyName>
+                               </configuration>
+                           </execution>
+                           <execution>
+                               <id>post-integration-test</id>
+                               <phase>test</phase>
+                               <goals>
+                                   <goal>report</goal>
+                               </goals>
+                               <configuration>
+                                   <dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
+                                   <outputDirectory>${project.build.directory}/jacoco-it</outputDirectory>
+                               </configuration>
+                           </execution>
+	                   </executions>
+	               </plugin>
+	           </plugins>
+	       </build>
+	   </profile>
+	</profiles>
+
+	<dependencyManagement>
+
+		<dependencies>
+			<!-- project dependencies -->
+			<dependency>
+				<groupId>com.github.hal4j</groupId>
+				<artifactId>hal4j-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.hal4j</groupId>
+				<artifactId>hal4j-jackson</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.github.hal4j</groupId>
+				<artifactId>hal4j-spring</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+            <!-- utilities -->
+			<dependency>
+			    <groupId>com.github.hal4j</groupId>
+				<version>${uritemplate.version}</version>
+				<artifactId>uritemplate</artifactId>
+			</dependency>
+            <dependency>
+                <groupId>com.github.resource4j</groupId>
+                <artifactId>converters</artifactId>
+                <version>${resource4j.version}</version>
+            </dependency>
+			
+			<!-- logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<!-- integration -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${springframework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${springframework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- test dependencies -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit-jupiter-engine.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${springframework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+				<scope>test</scope>
+			</dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
