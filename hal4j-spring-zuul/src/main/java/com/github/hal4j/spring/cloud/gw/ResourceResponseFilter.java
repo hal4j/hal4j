@@ -53,7 +53,10 @@ public class ResourceResponseFilter extends ZuulFilter implements MergeStrategy 
     @Override
     public boolean shouldFilter() {
         RequestContext context = getCurrentContext();
-        return context.getRequest().getParameter("service") == null;
+        String contentType = context.getResponse().getHeader("Content-Type");
+        return context.getResponseStatusCode() < 300
+                && contentType != null
+                && contentType.startsWith("application/json");
     }
 
     @Override

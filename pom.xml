@@ -67,7 +67,7 @@
 
         <!-- Testing -->
         <junit-jupiter-engine.version>5.2.0</junit-jupiter-engine.version>
-        <uritemplate.version>1.1.0-SNAPSHOT</uritemplate.version>
+        <uritemplate.version>1.2.0</uritemplate.version>
     </properties>
 
 	<build>

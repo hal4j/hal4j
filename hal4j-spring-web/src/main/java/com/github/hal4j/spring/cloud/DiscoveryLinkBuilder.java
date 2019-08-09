@@ -7,11 +7,10 @@ import com.github.hal4j.uritemplate.URIBuilder;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.github.hal4j.resources.cloud.DiscoveryClientLinkResolver.SERVICE_NS;
 import static com.github.hal4j.uritemplate.URIBuilder.uri;
 import static com.github.hal4j.uritemplate.URITemplateVariable.template;
 import static java.util.stream.Collectors.toSet;
-
-import static com.github.hal4j.resources.cloud.DiscoveryClientLinkResolver.SERVICE_NS;
 
 public class DiscoveryLinkBuilder extends SpringWebLinkBuilder {
 
@@ -32,6 +31,8 @@ public class DiscoveryLinkBuilder extends SpringWebLinkBuilder {
     protected URIBuilder link(HypermediaRequest request) {
         String host = request.resolved().host();
         URIBuilder builder = uri(request.resolved().scheme(), host, request.resolved().port());
-        return LOCALHOSTS.contains(host) ? builder : builder.host(template(SERVICE_NS + "." + this.service));
+        return LOCALHOSTS.contains(host)
+                ? builder
+                : builder.server(template(SERVICE_NS + "." + this.service));
     }
 }

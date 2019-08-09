@@ -1,6 +1,6 @@
 package com.github.hal4j.jackson;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.hal4j.resources.HALLink;
 
@@ -10,10 +10,10 @@ import java.util.Map;
 @JsonDeserialize(using = NavigationResourceDeserializer.class)
 public abstract class NavigationResourceMixin {
 
-    @JsonGetter("_links")
-    public abstract Map<String, List<HALLink>> links();
+    @JsonProperty("_links")
+    private Map<String, List<HALLink>> _links;
 
-    @JsonGetter("_embedded")
-    public abstract Map<String, List<Object>> attachments();
+    @JsonProperty("_embedded")
+    private Map<String, List<Object>> _embedded;
 
 }
