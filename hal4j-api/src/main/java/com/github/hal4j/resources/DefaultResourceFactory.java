@@ -37,7 +37,7 @@ public class DefaultResourceFactory implements ResourceFactory {
     }
 
     @Override
-    public NavigationResourceBuilder createEntry() {
+    public NavigationResourceBuilder bindEntry() {
         return new NavigationResourceBuilder(resolver).in(context);
     }
 

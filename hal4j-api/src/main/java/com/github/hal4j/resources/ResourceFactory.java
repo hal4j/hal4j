@@ -10,6 +10,6 @@ public interface ResourceFactory {
 
     GenericResourceBuilder bindGeneric();
 
-    NavigationResourceBuilder createEntry();
+    NavigationResourceBuilder bindEntry();
 
 }

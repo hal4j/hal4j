@@ -274,7 +274,7 @@
 			
 			<dependency>
 				<groupId>com.github.hal4j</groupId>
-				<artifactId>hal4j-spring</artifactId>
+				<artifactId>hal4j-spring-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
