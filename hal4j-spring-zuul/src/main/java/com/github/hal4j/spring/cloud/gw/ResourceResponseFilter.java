@@ -2,6 +2,7 @@ package com.github.hal4j.spring.cloud.gw;
 
 import com.github.hal4j.jackson.JacksonHALMapper;
 import com.github.hal4j.resources.*;
+import com.google.common.base.Predicates;
 import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -110,7 +111,7 @@ public class ResourceResponseFilter extends ZuulFilter {
         int port = request.getServerPort();
 
         Map<String, String> services = client.getServices().stream()
-                .filter(serviceId::equals)
+                .filter(id -> !serviceId.equals(id))
                 .collect(toMap(
                         instanceId -> instanceId,
                         instanceId -> uri(scheme, host, port).relative(instanceId).toString()));
