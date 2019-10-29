@@ -14,7 +14,7 @@
     <description>Jackson data binding for HAL</description>
 
     <properties>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.10.0</jackson.version>
     </properties>
 
     <dependencies>
