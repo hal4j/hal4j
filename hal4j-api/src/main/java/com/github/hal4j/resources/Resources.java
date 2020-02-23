@@ -48,6 +48,10 @@ public final class Resources<T> extends ResourceSupport {
         return embedded().count(HALLink.REL_ITEMS);
     }
 
+    public Stream<T> values() {
+        return stream().map(Resource::value);
+    }
+
     @SuppressWarnings("unchecked")
     public Stream<Resource<T>> stream() {
         return embedded().selectAll(HALLink.REL_ITEMS)

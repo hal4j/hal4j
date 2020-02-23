@@ -6,6 +6,8 @@ import com.github.hal4j.uritemplate.URITemplate;
 
 import java.net.URI;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -138,19 +140,40 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
 
         private final URI rel;
 
+        private boolean accepted = true;
+
         public Linker(URI rel) {
             this.rel = rel;
         }
 
+        public Linker when(boolean condition) {
+            this.accepted = condition;
+            return this;
+        }
+
+        public Linker when(Predicate<URI> voter) {
+            this.accepted = voter.test(rel);
+            return this;
+        }
+
+        public Linker when(Supplier<Boolean> condition) {
+            this.accepted = condition.get();
+            return this;
+        }
+
         public B to(HALLink link) {
-            List<HALLink> relLinks = mutableLinks(rel);
-            relLinks.add(link);
+            if (accepted) {
+                List<HALLink> relLinks = mutableLinks(rel);
+                relLinks.add(link);
+            }
             return _this();
         }
 
         public B to(HALLinkBuilder linkBuilder) {
-            List<HALLink> relLinks = mutableLinks(rel);
-            relLinks.add(linkBuilder.build());
+            if (accepted) {
+                List<HALLink> relLinks = mutableLinks(rel);
+                relLinks.add(linkBuilder.build());
+            }
             return _this();
         }
 
@@ -180,14 +203,18 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         }
 
         public B toAll(HALLinkBuilder... builders) {
-            List<HALLink> relLinks = mutableLinks(rel);
-            Stream.of(builders).map(HALLinkBuilder::build).forEach(relLinks::add);
+            if (accepted) {
+                List<HALLink> relLinks = mutableLinks(rel);
+                Stream.of(builders).map(HALLinkBuilder::build).forEach(relLinks::add);
+            }
             return _this();
         }
 
         public B toAll(Collection<HALLink> links) {
-            List<HALLink> relLinks = mutableLinks(rel);
-            relLinks.addAll(links);
+            if (accepted) {
+                List<HALLink> relLinks = mutableLinks(rel);
+                relLinks.addAll(links);
+            }
             return _this();
         }
 

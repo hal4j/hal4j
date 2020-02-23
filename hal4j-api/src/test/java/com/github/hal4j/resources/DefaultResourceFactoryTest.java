@@ -2,12 +2,15 @@ package com.github.hal4j.resources;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import static com.github.hal4j.resources.HALLink.REL_SELF;
 import static com.github.hal4j.resources.HALLinkBuilder.alt;
 import static com.github.hal4j.resources.HALLinkBuilder.uri;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultResourceFactoryTest {
 
@@ -16,6 +19,45 @@ public class DefaultResourceFactoryTest {
         DefaultResourceFactory factory = new DefaultResourceFactory();
         Resource<Object> resource = factory.bind(new Object()).to("/object").asResource();
         assertEquals("/object", resource.self().toString());
+    }
+
+    @Test
+    void shouldAlwaysLinkRelationWithoutCondition() {
+        DefaultResourceFactory factory = new DefaultResourceFactory();
+        Resource<Object> resource = factory.bind(new Object()).to("/object")
+                .link("ns:ref").to("/object/ref")
+                .asResource();
+        assertTrue(resource.links().include("ns:ref"));
+        assertTrue(resource.links().find("ns:ref").isPresent());
+    }
+
+    @Test
+    void shouldLinkRelationConditionally() {
+        DefaultResourceFactory factory = new DefaultResourceFactory();
+        Resource<Object> resource = factory.bind(new Object()).to("/object")
+                .link("ns:ref").when(false).to("/object/ref")
+                .asResource();
+        assertFalse(resource.links().include("ns:ref"));
+    }
+
+    @Test
+    void shouldLinkRelationConditionallyWithDeferredVeto() {
+        Predicate<URI> never = rel -> false;
+        DefaultResourceFactory factory = new DefaultResourceFactory();
+        Resource<Object> resource = factory.bind(new Object()).to("/object")
+                .link("ns:ref").when(never).to("/object/ref")
+                .asResource();
+        assertFalse(resource.links().include("ns:ref"));
+    }
+
+    @Test
+    void shouldLinkRelationConditionallyWithDeferredCondition() {
+        Supplier<Boolean> never = () -> false;
+        DefaultResourceFactory factory = new DefaultResourceFactory();
+        Resource<Object> resource = factory.bind(new Object()).to("/object")
+                .link("ns:ref").when(never).to("/object/ref")
+                .asResource();
+        assertFalse(resource.links().include("ns:ref"));
     }
 
     @Test

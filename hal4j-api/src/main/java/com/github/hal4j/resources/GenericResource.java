@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class GenericResource extends ResourceSupport {
 
@@ -44,8 +45,15 @@ public final class GenericResource extends ResourceSupport {
         return new Resources<T>(this.links().asIs(), this.embedded().asIs(), (Class) Resource.class, resources, context());
     }
 
+    public <T> Stream<Resource<T>> asStreamOf(Class<T> clazz) {
+        return asCollectionOf(clazz).stream();
+    }
+
+    public NavigationResource asRoot() {
+        return new NavigationResource(this.links().asIs(), this.embedded().asIs());
+    }
+
     public Map<String, ?> get() {
         return this.model;
     }
-
 }

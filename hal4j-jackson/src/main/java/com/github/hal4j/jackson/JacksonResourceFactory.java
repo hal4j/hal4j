@@ -11,6 +11,9 @@ public class JacksonResourceFactory extends DefaultResourceFactory {
         super(null, new JacksonBindingContext(mapper));
     }
 
+    /**
+     * @deprecated use similar constructor with ObjectMapper instead
+     */
     public JacksonResourceFactory(JacksonHALMapper wrapped) {
         super(null, new JacksonBindingContext(wrapped.mapper()));
     }
@@ -19,6 +22,9 @@ public class JacksonResourceFactory extends DefaultResourceFactory {
         super(resolver, new JacksonBindingContext(mapper));
     }
 
+    /**
+     * @deprecated use similar constructor with ObjectMapper instead
+     */
     public JacksonResourceFactory(CurieResolver resolver, JacksonHALMapper wrapped) {
         super(resolver, new JacksonBindingContext(wrapped.mapper()));
     }
