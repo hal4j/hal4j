@@ -57,7 +57,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>1.8</java.version>
+        <java.version>8</java.version>
 
         <!-- data conversion -->
         <resource4j.version>3.2.0</resource4j.version>
@@ -67,8 +67,8 @@
 		<logback.version>1.1.7</logback.version>
 
         <!-- Testing -->
-        <junit-jupiter-engine.version>5.2.0</junit-jupiter-engine.version>
-        <uritemplate.version>1.2.0</uritemplate.version>
+        <junit-jupiter-engine.version>5.6.0</junit-jupiter-engine.version>
+        <uritemplate.version>1.2.1</uritemplate.version>
     </properties>
 
 	<build>
@@ -146,6 +146,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.4</version>
+						<configuration>
+							<source>8</source>
+						</configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
