@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class HALLink implements Serializable {
 
@@ -14,9 +16,35 @@ public class HALLink implements Serializable {
     public static final String REL_NEXT = "next";
     public static final String REL_PREV = "prev";
     public static final String REL_ITEMS = "items";
-    public static final String REL_CURIE = "curie";
 
-    public static final String SAME_RESOURCE = ".";
+    /**
+     * An optional convention for href values indicating that provided link is pointing to the same
+     * resource (i.e. "self" link of the resource can be used).
+     * Example 1: multiple links referencing to self
+     * <pre>
+     *     {
+     *          "_links" : {
+     *              "self" : { "href": "https://api.example.com/object/1" },
+     *              "crud:update" : { "href" : "." },
+     *              "crud:delete" : { "href" : "." }
+     *          }
+     *     }
+     * </pre>
+     * Example 2: multiple self links defining operations on the object
+     * <pre>
+     *     {
+     *          "_links" : {
+     *              "self" : [
+     *                  { "href" : "https://api.example.com/object/1" },
+     *                  { "href" : ".", "name" : "http:DELETE" },
+     *                  { "href" : ".", "name" : "http:PUT" }
+ *                  ]
+     *          }
+     *     }
+     * </pre>     */
+    public static final String HREF_SAME_RESOURCE = ".";
+
+    public static final Predicate<HALLink> SAME_RESOURCE = link -> link.href.equals(HREF_SAME_RESOURCE);
 
     public final String name;
 
@@ -60,6 +88,28 @@ public class HALLink implements Serializable {
         this.deprecation = deprecation;
     }
 
+    private HALLink(String href,
+                   boolean templated,
+                   String title,
+                   String name,
+                   String type,
+                   String hreflang,
+                   URI profile,
+                   URI deprecation) {
+        this.href = href;
+        this.templated = templated;
+        this.title = title;
+        this.name = name;
+        this.type = type;
+        this.hreflang = hreflang;
+        this.profile = profile;
+        this.deprecation = deprecation;
+    }
+
+    /**
+     * Checks if this link shall be treated as templated
+     * @return
+     */
     public boolean isTemplated() {
         return templated;
     }
@@ -109,8 +159,12 @@ public class HALLink implements Serializable {
     }
 
     public static HALLink create(URI href) {
-        return new HALLink(href.toString(), false, null, null, null, null,
+        return new HALLink(href.toString(), false, null, (URI) null, null, null,
                 null, null);
     }
 
-};
+    HALLink resolve(HALLink src) {
+        return new HALLink(src.href, src.templated, title, name, type, hreflang, profile, deprecation);
+    }
+
+}

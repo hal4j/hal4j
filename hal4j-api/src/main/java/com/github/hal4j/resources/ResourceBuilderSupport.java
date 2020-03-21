@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.hal4j.resources.HALLink.REL_CURIE;
+import static com.github.hal4j.resources.curie.CurieResolver.REL_CURIES;
 import static com.github.hal4j.resources.HALLink.REL_SELF;
 import static java.util.Arrays.asList;
 
@@ -116,7 +116,7 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         URITemplate resolved = resolver.resolve(ns);
         if (resolved != null) {
             HALLink link = HALLinkBuilder.uri(resolved.toString()).name(ns).build();
-            this.link(REL_CURIE).to(link);
+            this.link(REL_CURIES).to(link);
         }
     }
 
