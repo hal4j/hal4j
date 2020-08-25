@@ -11,6 +11,8 @@ import static com.github.hal4j.uritemplate.URITemplateVariable.preEncoded;
 public class DiscoveryLinkBuilder extends SpringWebLinkBuilder {
 
     private final String service;
+    
+    private boolean allowLocal;
 
     public static DiscoveryLinkBuilder link(String service) {
         return new DiscoveryLinkBuilder(service);
@@ -21,10 +23,15 @@ public class DiscoveryLinkBuilder extends SpringWebLinkBuilder {
         this.service = service;
     }
 
+    public DiscoveryLinkBuilder allowLocal() {
+        this.allowLocal = true;
+        return this;
+    }
+    
     @Override
     protected URIBuilder link(HypermediaRequest request) {
         String host = request.resolved().host();
         URIBuilder builder = uri(request.resolved().scheme(), host, request.resolved().port());
-        return builder.server(preEncoded(SERVICE_NS + "." + this.service));
+        return "localhost".equals(host) && allowLocal ? builder : builder.server(preEncoded(SERVICE_NS + "." + this.service));
     }
 }
