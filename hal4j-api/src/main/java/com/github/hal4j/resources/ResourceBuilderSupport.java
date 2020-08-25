@@ -90,9 +90,17 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
     }
 
     public B embed(URI rel, Object... objects) {
+        return embedAll(rel, asList(objects));
+    }
+
+    public B embedAll(String rel, Collection<?> objects) {
+        return embedAll(URI.create(rel), objects);
+    }
+
+    public B embedAll(URI rel, Collection<?> objects) {
         resolve(rel);
         List<Object> existing = this.embedded().computeIfAbsent(rel.toString(), any -> new ArrayList<>());
-        existing.addAll(asList(objects));
+        existing.addAll(objects);
         return _this();
     }
 
