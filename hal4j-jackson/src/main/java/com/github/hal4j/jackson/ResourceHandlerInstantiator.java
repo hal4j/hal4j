@@ -57,7 +57,7 @@ public class ResourceHandlerInstantiator extends HandlerInstantiator {
     public TypeIdResolver typeIdResolverInstance(MapperConfig<?> config,
                                                  Annotated annotated,
                                                  Class<?> resolverClass) {
-        return typeIdResolverInstance(config, annotated, resolverClass);
+        return delegate.typeIdResolverInstance(config, annotated, resolverClass);
     }
 
 }

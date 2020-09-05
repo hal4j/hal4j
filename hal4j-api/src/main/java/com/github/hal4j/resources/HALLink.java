@@ -62,6 +62,19 @@ public class HALLink implements Serializable {
 
     public final URI deprecation;
 
+    /**
+     * Creates new instance of HALLink object
+     * @param href required, must either conform to specification of URI or be a valid URI template
+     * @param templated when <code>true</code> indicates that this link should be treated as an URI template
+     * @param title the title of this link which can be displayed to end users
+     * @param name the semantic name of this link which can be used to determine its purpose programmatically
+     * @param type the optional type of this link
+     * @param hreflang the optional language of the target resource as ISO code
+     * @param profile the optional URI of the specification of this link
+     * @param deprecation the optional URI of the resource describing the reasons for deprecation of this link
+     * @see URITemplate
+     * @see URI
+     */
     public HALLink(String href,
                    boolean templated,
                    String title,
@@ -108,56 +121,121 @@ public class HALLink implements Serializable {
 
     /**
      * Checks if this link shall be treated as templated
-     * @return
+     * @return <code>true</code> if this link is templated, <code>false</code> otherwise
      */
     public boolean isTemplated() {
         return templated;
     }
 
+    /**
+     * Returns the semantic name of this link which can be used to determine
+     * its purpose programmatically or <code>null</code> if not set
+     * @return this.name
+     * @see HALLink#name
+     */
     public String name() {
         return this.name;
     }
 
+    /**
+     * Returns the title of this link which can be displayed to end users
+     * or <code>null</code> if not set
+     * @return this.title
+     * @see HALLink#title
+     */
     public String title() {
         return this.title;
     }
 
+    /**
+     * Returns the non-null value of this link
+     * @return this.href
+     * @see HALLink#href
+     */
     public String href() {
         return this.href;
     }
 
+    /**
+     * Returns the type of this link which can be used to
+     * or <code>null</code> if not set
+     * @return this.type
+     * @see HALLink#type
+     */
     public String type() {
         return this.type;
     }
 
+    /**
+     * Returns this link as URI object
+     * @return this.href as URI
+     * @see HALLink#href
+     */
     public URI uri() {
         return URI.create(this.href);
     }
 
+    /**
+     * Returns the language of the target resource as ISO code or <code>null</code> if not set
+     * @return this.hreflang
+     * @see HALLink#hreflang
+     */
     public String language() {
         return this.hreflang;
     }
 
+    /**
+     * Returns the URI of the specification of this link or <code>null</code> if not set
+     * @return this.profile
+     * @see HALLink#profile
+     */
     public URI profile() {
         return this.profile;
     }
 
+    /**
+     * Returns the URI of the resource describing the reasons for deprecation of this link
+     * or <code>null</code> if not set
+     * @return this.deprecation
+     * @see HALLink#deprecation
+     */
     public URI deprecation() {
         return this.deprecation;
     }
 
+    /**
+     * this link as an instance of {@link URITemplate}
+     * @return new URITemplate object constructed from this.href
+     */
     public URITemplate template() {
         return URIFactory.templateUri(href);
     }
 
+    /**
+     * Expands this link as URI template with given parameters and returns the resulting URI
+     * @param substitutions the template parameters to substitute
+     * @return new <code>URI</code> object
+     * @see URITemplate#expand(Map)
+     */
     public URI expand(Map<String, ?> substitutions) {
         return this.template().expand(substitutions).toURI();
     }
 
+    /**
+     * Expands this link as URI template with given parameters and returns the resulting URI
+     * @param substitutions the template parameters to substitute in given order
+     * @return new <code>URI</code> object
+     * @see URITemplate#expand(Object...)
+     */
     public URI expand(Object... substitutions) {
         return this.template().expand(substitutions).toURI();
     }
 
+    /**
+     * Create new HAL link from given URI
+     * @param href the link to be wrapped
+     * @return new HALLink object with given URI as href
+     */
     public static HALLink create(URI href) {
         return new HALLink(href.toString(), false, null, (URI) null, null, null,
                 null, null);

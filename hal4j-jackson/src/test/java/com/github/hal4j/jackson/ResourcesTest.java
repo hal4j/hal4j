@@ -1,6 +1,8 @@
 package com.github.hal4j.jackson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hal4j.resources.DefaultResourceFactory;
 import com.github.hal4j.resources.HALLink;
 import com.github.hal4j.resources.Resources;
@@ -30,7 +32,7 @@ public class ResourcesTest {
     }
 
     @Test
-    public void shouldCorrectlySerializeAndDeserializeModel() {
+    public void shouldCorrectlySerializeAndDeserializeModel() throws JsonProcessingException {
         DefaultResourceFactory factory = new DefaultResourceFactory(curie("http://www.example.com/rel/{ns}/{rel}"));
 
         String link = "http://www.example.com/api/link";
@@ -46,9 +48,9 @@ public class ResourcesTest {
                 .link("example:link").to(link)
                 .build();
 
-        JacksonHALMapper json = new JacksonHALMapper();
-        String string = json.serialize(resources);
-        Resources<Account> parsed = json.parse(string, new TypeReference<Resources<Account>>() {});
+        ObjectMapper json = HALObjectMapperFactory.createStrictMapper();
+        String string = json.writeValueAsString(resources);
+        Resources<Account> parsed = json.readValue(string, new TypeReference<Resources<Account>>() {});
         assertNotNull(parsed.self());
         assertEquals(self, parsed.self().toString());
         assertEquals(link, parsed.links().find("example:link").map(HALLink::href).orElse(null));

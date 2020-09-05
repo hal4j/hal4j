@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class ResourceDeserializer extends JsonDeserializer {
+public class ResourceDeserializer extends JsonDeserializer<Resource<?>> {
 
     private JavaType modelType;
 
@@ -26,15 +26,14 @@ public class ResourceDeserializer extends JsonDeserializer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object deserialize(JsonParser jp,
+    public Resource<?> deserialize(JsonParser jp,
                               DeserializationContext ctx) throws IOException, JsonProcessingException {
         ObjectCodec codec = jp.getCodec();
         ObjectNode node = codec.readTree(jp);
         Map<String, List<Object>> embedded = Deserializers.parseAndRemove(codec, node, "_embedded", new TypeReference<Map<String, List<Object>>>(){});
         Map<String, List<HALLink>> links = Deserializers.parseAndRemove(codec, node, "_links", new TypeReference<Map<String, List<HALLink>>>(){});
         Object model = codec.readValue(codec.treeAsTokens(node), modelType);
-        return new Resource(model, links, embedded);
+        return new Resource<>(model, links, embedded);
     }
 
 }

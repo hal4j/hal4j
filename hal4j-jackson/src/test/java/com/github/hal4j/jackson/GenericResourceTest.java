@@ -1,5 +1,7 @@
 package com.github.hal4j.jackson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hal4j.resources.DefaultResourceFactory;
 import com.github.hal4j.resources.GenericResource;
 import com.github.hal4j.resources.Resource;
@@ -35,7 +37,7 @@ public class GenericResourceTest {
     }
 
     @Test
-    public void shouldCorrectlySerializeAndDeserializeGenericResource() {
+    public void shouldCorrectlySerializeAndDeserializeGenericResource() throws JsonProcessingException {
         DefaultResourceFactory factory = new DefaultResourceFactory(curie("http://www.example.com/rel/{ns}/{rel}"));
         String link = "http://www.example.com/api/link";
         String self = "http://www.example.com/accounts/1";
@@ -45,9 +47,9 @@ public class GenericResourceTest {
         List<Order> original = createAttachments();
         builder.embed("example:orders", original);
         Resource<Account> resource = builder.build();
-        JacksonHALMapper json = new JacksonHALMapper();
-        String first = json.serialize(resource);
-        GenericResource generic = json.parse(first, GenericResource.class);
+        ObjectMapper json = HALObjectMapperFactory.createStrictMapper();
+        String first = json.writeValueAsString(resource);
+        GenericResource generic = json.readValue(first, GenericResource.class);
         List<Order> orders = generic.as(Account.class)
                 .embedded().findAll("example:orders", Order.class);
         assertNotNull(orders);

@@ -31,7 +31,7 @@ import com.github.hal4j.uritemplate.URITemplate;
  * </pre>
  *  In this example namespace <code>my</code> wasresolved
  *  to URI template <code>https://my.example.com/apidoc/v1/{rel}</code>
- *  and namespace <code>another</code> to </code><code>https://docs.another.com/api/{rel}</code>
+ *  and namespace <code>another</code> to <code>https://docs.another.com/api/{rel}</code>
  *
  * @see com.github.hal4j.resources.ResourceSupport
  * @see com.github.hal4j.resources.HALLink

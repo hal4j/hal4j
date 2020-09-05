@@ -14,10 +14,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class NavigationResourceDeserializer extends JsonDeserializer {
+public class NavigationResourceDeserializer extends JsonDeserializer<NavigationResource> {
 
     @Override
-    public Object deserialize(JsonParser jp,
+    public NavigationResource deserialize(JsonParser jp,
                               DeserializationContext ctx) throws IOException {
         ObjectCodec codec = jp.getCodec();
         ObjectNode node = codec.readTree(jp);

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class ResourcesDeserializer extends JsonDeserializer {
+public class ResourcesDeserializer extends JsonDeserializer<Resources<?>> {
 
     private JavaType modelType;
 
@@ -27,8 +27,7 @@ public class ResourcesDeserializer extends JsonDeserializer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object deserialize(JsonParser jp,
+    public Resources<?> deserialize(JsonParser jp,
                               DeserializationContext ctx) throws IOException, JsonProcessingException {
         ObjectCodec codec = jp.getCodec();
         ObjectNode node = codec.readTree(jp);

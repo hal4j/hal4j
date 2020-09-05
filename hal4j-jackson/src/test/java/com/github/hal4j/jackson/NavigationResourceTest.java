@@ -1,5 +1,7 @@
 package com.github.hal4j.jackson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hal4j.resources.DefaultResourceFactory;
 import com.github.hal4j.resources.NavigationResource;
 import com.github.hal4j.resources.Resource;
@@ -35,7 +37,7 @@ public class NavigationResourceTest {
     }
 
     @Test
-    public void shouldCorrectlySerializeAndDeserializeNavigationResource() {
+    public void shouldCorrectlySerializeAndDeserializeNavigationResource() throws JsonProcessingException {
         DefaultResourceFactory factory = new DefaultResourceFactory(curie("http://www.example.com/rel/{ns}/{rel}"));
         String link = "http://www.example.com/api/link";
         String self = "http://www.example.com/accounts/1";
@@ -45,9 +47,9 @@ public class NavigationResourceTest {
         List<Order> original = createAttachments();
         builder.embed("example:orders", original);
         Resource<Account> resource = builder.build();
-        JacksonHALMapper json = new JacksonHALMapper();
-        String first = json.serialize(resource);
-        NavigationResource entry = json.parse(first, NavigationResource.class);
+        ObjectMapper json = HALObjectMapperFactory.createStrictMapper();
+        String first = json.writeValueAsString(resource);
+        NavigationResource entry = json.readValue(first, NavigationResource.class);
         assertNotNull(entry);
         assertTrue(entry.links().include("example:link"));
     }

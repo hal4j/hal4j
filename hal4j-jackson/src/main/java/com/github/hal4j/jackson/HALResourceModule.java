@@ -3,10 +3,7 @@ package com.github.hal4j.jackson;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.hal4j.resources.GenericResource;
-import com.github.hal4j.resources.NavigationResource;
-import com.github.hal4j.resources.Resource;
-import com.github.hal4j.resources.Resources;
+import com.github.hal4j.resources.*;
 
 public class HALResourceModule extends SimpleModule {
 
@@ -18,6 +15,7 @@ public class HALResourceModule extends SimpleModule {
         setMixInAnnotation(NavigationResource.class, NavigationResourceMixin.class);
         setMixInAnnotation(Resource.class, ResourceMixin.class);
         setMixInAnnotation(Resources.class, ResourcesMixin.class);
+        setMixInAnnotation(HALLink.class, HALLinkMixin.class);
     }
 
     @Override

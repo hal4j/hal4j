@@ -6,14 +6,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.github.hal4j.resources.HALLink.REL_SELF;
-import static com.github.hal4j.resources.HALLink.HREF_SAME_RESOURCE;
-import static com.github.hal4j.resources.HALLink.SAME_RESOURCE;
-import static com.github.hal4j.resources.MissingLinkException.missingLink;
+import static com.github.hal4j.resources.HALLink.*;
 import static java.util.Collections.*;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 
@@ -24,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 public abstract class ResourceSupport implements Serializable {
 
     private final BindingContext context;
+
+    private final URI self;
 
     private final Map<String, List<HALLink>> _links;
 
@@ -37,6 +34,21 @@ public abstract class ResourceSupport implements Serializable {
                     Map<String, List<Object>> _embedded,
                     BindingContext context) {
         this._links = _links != null && !_links.isEmpty() ? clone(_links) : null;
+        HALLink self = null;
+        if (this._links != null) {
+            List<HALLink> all = this._links.get(REL_SELF);
+            if (all != null) {
+                for (HALLink link : all) {
+                    if (link.name == null) {
+                        self = link;
+                        break;
+                    } else if (self == null) {
+                        self = link;
+                    }
+                }
+            }
+        }
+        this.self = self != null ? self.uri() : null;
         this._embedded = _embedded != null && ! _embedded.isEmpty() ? clone(_embedded) : null;
         this.context = context;
     }
@@ -77,7 +89,7 @@ public abstract class ResourceSupport implements Serializable {
 
     /**
      * Returns hash code of this resource defined as hash code of the <code>self</code> link
-     * @return
+     * @return hash code of this object
      */
     @Override
     public int hashCode() {
@@ -94,9 +106,10 @@ public abstract class ResourceSupport implements Serializable {
      * @throws MissingLinkException if resource does not contain <code>self</code> link
      */
     public URI self() {
-        return links().find(REL_SELF)
-                .map(HALLink::uri)
-                .orElseThrow(missingLink(REL_SELF));
+        if (this.self == null) {
+            throw new MissingLinkException(REL_SELF);
+        }
+        return this.self;
     }
 
     /**
