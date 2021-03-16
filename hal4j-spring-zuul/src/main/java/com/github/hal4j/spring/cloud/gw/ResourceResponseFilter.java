@@ -1,8 +1,7 @@
 package com.github.hal4j.spring.cloud.gw;
 
-import com.github.hal4j.jackson.JacksonHALMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.hal4j.resources.*;
-import com.google.common.base.Predicates;
 import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -26,12 +25,12 @@ public class ResourceResponseFilter extends ZuulFilter {
 
     private String serviceId;
     private final ResourceFactory factory;
-    private final JacksonHALMapper json;
+    private final ObjectMapper json;
     private final DiscoveryClient client;
 
     public ResourceResponseFilter(String serviceId,
                                   ResourceFactory factory,
-                                  JacksonHALMapper json,
+                                  ObjectMapper json,
                                   DiscoveryClient client) {
         this.serviceId = serviceId;
         this.factory = factory;
@@ -92,10 +91,10 @@ public class ResourceResponseFilter extends ZuulFilter {
             RequestContext context = getCurrentContext();
             InputStream stream = context.getResponseDataStream();
 
-            GenericResource response = json.mapper().readValue(stream, GenericResource.class);
+            GenericResource response = json.readValue(stream, GenericResource.class);
 
             ResponseMapper responseMapper = createMapper(context);
-            String mappedString = json.serialize(responseMapper.map(response));
+            String mappedString = json.writeValueAsString(responseMapper.map(response));
 
             context.setResponseBody(mappedString);
         } catch (IOException e) {

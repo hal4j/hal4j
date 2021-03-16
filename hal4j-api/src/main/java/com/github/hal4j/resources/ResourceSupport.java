@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import static com.github.hal4j.resources.HALLink.*;
 import static java.util.Collections.*;
 import static java.util.Optional.*;
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -314,7 +313,7 @@ public abstract class ResourceSupport implements Serializable {
             }
             if (link == null) return empty();
             if (self == null) {
-                self = findAll(REL_SELF).stream().filter(not(SAME_RESOURCE)).findFirst()
+                self = findAll(REL_SELF).stream().filter(value -> !SAME_RESOURCE.test(value)).findFirst()
                         .orElseThrow(() -> new IllegalStateException("Self link not found"));
             }
             return Optional.of(link.resolve(self));

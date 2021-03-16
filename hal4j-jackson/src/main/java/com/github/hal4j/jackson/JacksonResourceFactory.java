@@ -6,27 +6,12 @@ import com.github.hal4j.resources.curie.CurieResolver;
 
 public class JacksonResourceFactory extends DefaultResourceFactory {
 
-
     public JacksonResourceFactory(ObjectMapper mapper) {
         super(null, new JacksonBindingContext(mapper));
     }
 
-    /**
-     * @deprecated use similar constructor with ObjectMapper instead
-     */
-    public JacksonResourceFactory(JacksonHALMapper wrapped) {
-        super(null, new JacksonBindingContext(wrapped.mapper()));
-    }
-
     public JacksonResourceFactory(CurieResolver resolver, ObjectMapper mapper) {
         super(resolver, new JacksonBindingContext(mapper));
-    }
-
-    /**
-     * @deprecated use similar constructor with ObjectMapper instead
-     */
-    public JacksonResourceFactory(CurieResolver resolver, JacksonHALMapper wrapped) {
-        super(resolver, new JacksonBindingContext(wrapped.mapper()));
     }
 
 }

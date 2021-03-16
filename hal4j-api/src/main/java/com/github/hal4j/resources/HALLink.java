@@ -15,7 +15,10 @@ public class HALLink implements Serializable {
     public static final String REL_SELF = "self";
     public static final String REL_NEXT = "next";
     public static final String REL_PREV = "prev";
+    public static final String REL_PAGE = "page";
     public static final String REL_ITEMS = "items";
+
+    public static final String PARAM_EXPAND = "expand";
 
     /**
      * An optional convention for href values indicating that provided link is pointing to the same
