@@ -15,7 +15,7 @@
 
     <properties>
         <springframework.version>5.3.2</springframework.version>
-        <spring-boot.version>2.4.1</spring-boot.version>
+        <spring-boot.version>2.5.12</spring-boot.version>
     </properties>
 
 
