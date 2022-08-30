@@ -14,8 +14,8 @@
     <description>HAL - Integration with Spring Framework (WebMVC)</description>
 
     <properties>
-        <springframework.version>5.3.2</springframework.version>
-        <spring-boot.version>2.4.1</spring-boot.version>
+        <springframework.version>5.3.22</springframework.version>
+        <spring-boot.version>2.7.3</spring-boot.version>
     </properties>
 
 

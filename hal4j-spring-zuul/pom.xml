@@ -14,7 +14,7 @@
     <description>HAL - Integration with Netflix Zuul API Gateway</description>
 
     <properties>
-        <spring-cloud-starter-netflix-zuul.version>2.2.6.RELEASE</spring-cloud-starter-netflix-zuul.version>
+        <spring-cloud-starter-netflix-zuul.version>2.2.10.RELEASE</spring-cloud-starter-netflix-zuul.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     </properties>
 
