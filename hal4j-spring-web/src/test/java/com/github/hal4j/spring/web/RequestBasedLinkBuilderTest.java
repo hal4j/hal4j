@@ -2,15 +2,11 @@ package com.github.hal4j.spring.web;
 
 import com.github.hal4j.spring.example.ResourceController;
 import com.github.hal4j.spring.example.ResourcesController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
