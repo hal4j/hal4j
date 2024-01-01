@@ -6,6 +6,7 @@ import com.github.hal4j.uritemplate.URITemplate;
 
 import java.net.URI;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -58,6 +59,17 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
             _embedded = new HashMap<>();
         }
         return _embedded;
+    }
+
+    public ResourceBuilderContributor<R, B> when(Supplier<Boolean> condition) {
+        return new ResourceBuilderContributor<>((B) this, condition);
+    }
+
+    public B add(ResourceRelation... relations) {
+        for (ResourceRelation relation : relations) {
+            this.link(relation.name()).to(relation.link());
+        }
+        return (B) this;
     }
 
     public Linker linkSelf() {
@@ -142,6 +154,37 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
             this.embedded().put(rel, objects);
         });
         return _this();
+    }
+
+    public class ResourceBuilderContributor<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
+
+
+        private final B builder;
+
+        private final Supplier<Boolean> condition;
+
+        public ResourceBuilderContributor(B builder, Supplier<Boolean> condition) {
+            this.builder = builder;
+            this.condition = condition;
+        }
+
+        public B apply(Consumer<B> consumer) {
+            if (condition.get()) {
+                consumer.accept(builder);
+                return builder;
+            }
+            return builder;
+        }
+        public B add(ResourceRelation... relations) {
+            if (condition.get()) {
+                builder.add(relations);
+                for (ResourceRelation relation : relations) {
+                    builder.link(relation.name()).to(relation.link());
+                }
+            }
+            return builder;
+        }
+
     }
 
     public class Linker {

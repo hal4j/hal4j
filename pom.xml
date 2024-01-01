@@ -3,7 +3,7 @@
 
 	<groupId>com.github.hal4j</groupId>
 	<artifactId>hal4j-parent</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>HAL4J</name>
@@ -16,7 +16,6 @@
         <module>hal4j-api</module>
         <module>hal4j-jackson</module>
         <module>hal4j-spring-web</module>
-        <module>hal4j-spring-zuul</module>
 	</modules>
 
     <licenses>
@@ -59,17 +58,17 @@
 
         <java.version>17</java.version>
 
-		<uritemplate.version>1.3.1</uritemplate.version>
+		<uritemplate.version>2.0.0</uritemplate.version>
 
         <!-- data conversion -->
         <resource4j.version>3.3.1</resource4j.version>
 
         <!-- Logging -->
-		<slf4j.version>2.0.7</slf4j.version>
-		<logback.version>1.4.11</logback.version>
+		<slf4j.version>2.0.9</slf4j.version>
+		<logback.version>1.4.14</logback.version>
 
         <!-- Testing -->
-        <junit-jupiter-engine.version>5.10.0</junit-jupiter-engine.version>
+        <junit-jupiter-engine.version>5.10.1</junit-jupiter-engine.version>
     </properties>
 
 	<build>
@@ -91,7 +90,7 @@
                     <dependency>
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>
-                        <version>9.5</version> <!-- Use newer version of ASM -->
+                        <version>9.6</version> <!-- Use newer version of ASM -->
                     </dependency>
                 </dependencies>
 			</plugin>

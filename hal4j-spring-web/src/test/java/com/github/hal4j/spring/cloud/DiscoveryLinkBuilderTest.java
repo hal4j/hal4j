@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.UUID;
