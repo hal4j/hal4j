@@ -2,7 +2,7 @@ package com.github.hal4j.spring.web;
 
 import com.github.hal4j.spring.HypermediaRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;

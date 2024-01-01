@@ -14,12 +14,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.github.hal4j.uritemplate.URITemplateModifier.MATRIX;
+import static com.github.hal4j.uritemplate.URITemplateOperator.MATRIX;
 import static com.github.hal4j.uritemplate.URITemplateVariable.queryParam;
 import static com.github.hal4j.uritemplate.URITemplateVariable.template;
 import static com.github.hal4j.uritemplate.URIVarComponent.var;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 public class SpringWebRequestMappingDiscoverer implements MappingDiscoverer {
 
@@ -54,7 +53,7 @@ public class SpringWebRequestMappingDiscoverer implements MappingDiscoverer {
                     .filter(s -> !s.isEmpty())
                     .map(SpringWebRequestMappingDiscoverer::replaceWithTemplate)
                     .flatMap(e -> Stream.of("/", e))
-                    .collect(toList()));
+                    .toList());
         }
         return segments;
     }
@@ -69,15 +68,15 @@ public class SpringWebRequestMappingDiscoverer implements MappingDiscoverer {
         for (Parameter parameter : method.getParameters()) {
             if (parameter.isAnnotationPresent(RequestParam.class)) {
                 RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-                String name = annotation.name().length() > 0
+                String name = !annotation.name().isEmpty()
                         ? annotation.name()
-                        : (annotation.value().length() > 0 ? annotation.value() : parameter.getName());
+                        : (!annotation.value().isEmpty() ? annotation.value() : parameter.getName());
                 builder.query().append(queryParam(name));
             } else if (parameter.isAnnotationPresent(MatrixVariable.class)) {
                 MatrixVariable var = parameter.getAnnotation(MatrixVariable.class);
                 URITemplateVariable template = template(MATRIX, var(var.name()));
                 String pathVar = var.pathVar();
-                if (pathVar.length() > 0) {
+                if (!pathVar.isEmpty()) {
                     for (int i = 0; i < elements.size(); i++) {
                         Object element = elements.get(i);
                         if (element instanceof URITemplateVariable) {
@@ -104,7 +103,7 @@ public class SpringWebRequestMappingDiscoverer implements MappingDiscoverer {
     }
 
     private static Object replaceWithTemplate(String raw) {
-        if (raw.length() < 1) {
+        if (raw.isEmpty()) {
             return raw;
         }
         if ((raw.charAt(0) == '{') && (raw.charAt(raw.length() - 1) == '}')) {

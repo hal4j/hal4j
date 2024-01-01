@@ -19,7 +19,7 @@ public class TemplateCurieResolver implements CurieResolver {
 
     @Override
     public URITemplate resolve(String namespace) {
-        return template.expand("ns", namespace);
+        return template.expandPartial("ns", namespace);
     }
 
 }
