@@ -7,6 +7,7 @@ import static com.github.hal4j.uritemplate.URIFactory.templateUri;
 
 public class TemplateCurieResolver implements CurieResolver {
 
+    public static final String CURIE_NS = "ns";
     private URITemplate template;
 
     public static TemplateCurieResolver curie(String templateString) {
@@ -19,7 +20,7 @@ public class TemplateCurieResolver implements CurieResolver {
 
     @Override
     public URITemplate resolve(String namespace) {
-        return template.expandPartial("ns", namespace);
+        return template.expandPartial(CURIE_NS, namespace);
     }
 
 }
