@@ -1,11 +1,11 @@
 package com.github.hal4j.spring.example;
 
+import com.github.hal4j.resources.Resource;
 import com.github.hal4j.resources.ResourceFactory;
 import com.github.hal4j.resources.Resources;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 import static com.github.hal4j.spring.example.UserController.NS;
 import static com.github.hal4j.spring.example.UserController.PATH_USERS;
@@ -42,6 +42,13 @@ public class UsersController {
                 .linkSelf().to(link().to(UsersController.class).append(queryStart("version")).asTemplate().expand(version))
                 .asResource();
     }
+
+    @GetMapping(path = "/{id}/meta")
+    public Resource<User> fetchMetadata(@PathVariable(name = "id") UUID id,
+                                        @MatrixVariable(pathVar = "id") String tag) {
+        return hal.bind(users.findById(id).orElseThrow()).linkSelf().to(link().to(UsersController.class)).asResource();
+    }
+
 
 
 }

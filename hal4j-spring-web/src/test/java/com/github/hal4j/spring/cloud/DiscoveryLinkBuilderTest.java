@@ -21,7 +21,7 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForHttpsRequestToLocalhost() {
-        String originalURI = "https://localhost:8443/api/v1/resources/recent";
+        String originalURI = "https://localhost:8443/api/v1/users/recent";
         HttpServletRequest request = givenRequested(get(originalURI), "/");
         assertNotNull(request);
         assertEquals(originalURI, link("example").allowLocal().to(UsersController.class).relative("recent").asTemplate().toString());
@@ -30,7 +30,7 @@ public class DiscoveryLinkBuilderTest {
     @Test
     void shouldBuildCorrectTemplateLinkForHttpsRequestToLocalhost() {
         UUID uuid = UUID.randomUUID();
-        String originalURI = "https://localhost:8443/api/v1/resources/" + uuid + "/status";
+        String originalURI = "https://localhost:8443/api/v1/users/" + uuid + "/status";
         HttpServletRequest request = givenRequested(get(originalURI), "/");
         assertNotNull(request);
         assertEquals(originalURI, link("example").allowLocal().to(UserController.class).relative("status").asTemplate().expand(Collections.singletonMap("uuid", uuid)).toString());
@@ -38,8 +38,8 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedRequestProxy() {
-        String originalURI = "{+services.example}/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("https://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "{+services.example}/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("https://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com:8443"), "/");
         assertNotNull(request);
         assertEquals(originalURI, link("example").to(UsersController.class).relative("recent").asTemplate().toString());
@@ -47,8 +47,8 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestLB() {
-        String originalURI = "{+services.example}/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1/api/v1/resources/recent")
+        String originalURI = "{+services.example}/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https"), "/");
         request.setServerPort(-1); // workaround for a bug in MockHttpServletRequestBuilder (wrong default port for https)
@@ -58,8 +58,8 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestZuul() {
-        String originalURI = "{+services.example}/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "{+services.example}/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");
@@ -69,8 +69,8 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestZuulAlternativePort() {
-        String originalURI = "{+services.example}/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "{+services.example}/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com:8443")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");
@@ -80,8 +80,8 @@ public class DiscoveryLinkBuilderTest {
 
     @Test
     void shouldRenderMatrixVariables() {
-        String originalURI = "{+services.example}/api/v1/resources/{id}{;tag}/meta";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources")
+        String originalURI = "{+services.example}/api/v1/users/{id}{;tag}/meta";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");

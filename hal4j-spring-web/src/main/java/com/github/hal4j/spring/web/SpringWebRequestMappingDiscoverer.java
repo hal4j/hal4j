@@ -73,9 +73,12 @@ public class SpringWebRequestMappingDiscoverer implements MappingDiscoverer {
                         : (!annotation.value().isEmpty() ? annotation.value() : parameter.getName());
                 builder.query().append(queryParam(name));
             } else if (parameter.isAnnotationPresent(MatrixVariable.class)) {
-                MatrixVariable var = parameter.getAnnotation(MatrixVariable.class);
-                URITemplateVariable template = template(MATRIX, var(var.name()));
-                String pathVar = var.pathVar();
+                MatrixVariable annotation = parameter.getAnnotation(MatrixVariable.class);
+                String name = !annotation.name().isEmpty()
+                        ? annotation.name()
+                        : (!annotation.value().isEmpty() ? annotation.value() : parameter.getName());
+                URITemplateVariable template = template(MATRIX, var(name));
+                String pathVar = annotation.pathVar();
                 if (!pathVar.isEmpty()) {
                     for (int i = 0; i < elements.size(); i++) {
                         Object element = elements.get(i);
