@@ -65,10 +65,10 @@
 
         <!-- Logging -->
 		<slf4j.version>2.0.10</slf4j.version>
-		<logback.version>1.5.3</logback.version>
+		<logback.version>1.5.16</logback.version>
 
         <!-- Testing -->
-        <junit-jupiter-engine.version>5.10.2</junit-jupiter-engine.version>
+        <junit-jupiter-engine.version>5.11.4</junit-jupiter-engine.version>
     </properties>
 
 	<build>
@@ -90,7 +90,7 @@
                     <dependency>
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>
-                        <version>9.7</version> <!-- Use newer version of ASM -->
+                        <version>9.7.1</version> <!-- Use newer version of ASM -->
                     </dependency>
                 </dependencies>
 			</plugin>
