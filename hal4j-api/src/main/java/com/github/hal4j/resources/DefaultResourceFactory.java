@@ -24,10 +24,12 @@ public class DefaultResourceFactory implements ResourceFactory {
         this.context = context;
     }
 
+    @Override
     public <T> ResourceBuilder<T> bind(T object) {
         return new ResourceBuilder<>(object, resolver).in(context);
     }
 
+    @Override
     public <T extends ResourceSupport, B extends ResourceBuilderSupport<T, B>> B bind(Function<CurieResolver, B> builder) {
         return builder.apply(resolver).in(context);
     }
@@ -37,6 +39,7 @@ public class DefaultResourceFactory implements ResourceFactory {
         return new ResourcesBuilder<T>(elementType, objects, resolver).in(context);
     }
 
+    @Override
     public GenericResourceBuilder bindGeneric() {
         return new GenericResourceBuilder(resolver).in(context);
     }

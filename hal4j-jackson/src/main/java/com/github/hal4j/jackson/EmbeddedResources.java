@@ -48,6 +48,18 @@ public class EmbeddedResources extends ResourceSupport {
 
     }
 
+    /**
+     * This function returns a builder of EmbeddedResources using the given CurieResolver. Usage:
+     * <pre><code>
+     *     ResourceFactory factory = ...
+     *     EmbeddedResources resources = factory.bind(resources())
+     *        ...
+     *        .asResource();
+     *     SomeViewModel vm = new SomeViewModel(..., resources);
+     * </code></pre>
+     * @see com.github.hal4j.resources.ResourceFactory#bind(Function)
+     * @return a factory function for a builder of EmbeddedResources instance
+     */
     public static Function<CurieResolver, Builder> resources() {
         return Builder::new;
     }
@@ -70,3 +82,4 @@ public class EmbeddedResources extends ResourceSupport {
     }
 
 }
+
