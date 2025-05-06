@@ -25,11 +25,11 @@ public abstract class ResourceSupport implements Serializable {
 
     private final Map<String, List<Object>> _embedded;
 
-    ResourceSupport(ResourceSupport resource) {
+    protected ResourceSupport(ResourceSupport resource) {
         this(resource._links, resource._embedded, resource.context);
     }
 
-    ResourceSupport(Map<String, List<HALLink>> _links,
+    protected ResourceSupport(Map<String, List<HALLink>> _links,
                     Map<String, List<Object>> _embedded,
                     BindingContext context) {
         this._links = _links != null && !_links.isEmpty() ? clone(_links) : null;

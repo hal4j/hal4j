@@ -3,6 +3,7 @@ package com.github.hal4j.resources;
 import com.github.hal4j.resources.curie.CurieResolver;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 public class DefaultResourceFactory implements ResourceFactory {
 
@@ -25,6 +26,10 @@ public class DefaultResourceFactory implements ResourceFactory {
 
     public <T> ResourceBuilder<T> bind(T object) {
         return new ResourceBuilder<>(object, resolver).in(context);
+    }
+
+    public <T extends ResourceSupport, B extends ResourceBuilderSupport<T, B>> B bind(Function<CurieResolver, B> builder) {
+        return builder.apply(resolver).in(context);
     }
 
     @Override

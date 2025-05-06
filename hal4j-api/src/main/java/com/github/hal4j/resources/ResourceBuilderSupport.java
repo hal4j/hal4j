@@ -63,14 +63,18 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
     }
 
     public ResourceBuilderContributor<R, B> when(Supplier<Boolean> condition) {
-        return new ResourceBuilderContributor<>((B) this, condition);
+        return new ResourceBuilderContributor<>(_this(), condition);
+    }
+
+    public ResourceBuilderContributor<R, B> when(boolean condition) {
+        return new ResourceBuilderContributor<>(_this(), () -> condition);
     }
 
     public B add(ResourceRelation... relations) {
         for (ResourceRelation relation : relations) {
             this.link(relation.name()).to(relation.link());
         }
-        return (B) this;
+        return _this();
     }
 
     public Linker linkSelf() {
@@ -187,7 +191,7 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         return _this();
     }
 
-    public class ResourceBuilderContributor<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
+    public static class ResourceBuilderContributor<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
 
 
         private final B builder;

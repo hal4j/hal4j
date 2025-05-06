@@ -10,12 +10,14 @@ import com.github.hal4j.test.model.Account;
 import com.github.hal4j.test.model.Address;
 import com.github.hal4j.test.model.Order;
 import com.github.hal4j.test.model.OrderStatus;
+import com.github.hal4j.test.records.AccountRecord;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import static com.github.hal4j.jackson.EmbeddedResources.resources;
 import static com.github.hal4j.resources.curie.TemplateCurieResolver.curie;
 import static com.github.hal4j.test.model.Money.fromString;
 import static java.util.stream.Collectors.toList;
@@ -53,4 +55,26 @@ public class NavigationResourceTest {
         assertNotNull(entry);
         assertTrue(entry.links().include("example:link"));
     }
+
+    @Test
+    public void shouldSerializeAndDeserializeNavigationResourceUnwrappedInContainer() throws JsonProcessingException {
+        DefaultResourceFactory factory = new DefaultResourceFactory(curie("http://www.example.com/rel/{ns}/{rel}"));
+        String link = "http://www.example.com/api/link";
+        String self = "http://www.example.com/accounts/1";
+
+        EmbeddedResources resources = factory.bind(resources()).to(self)
+                .link("example:link").to(link)
+                .embed("example:orders", createAttachments())
+                .build();
+
+        var account = new AccountRecord("Alice", 21, resources);
+
+        ObjectMapper mapper = HALObjectMapperFactory.createStrictMapper();
+        String json = mapper.writeValueAsString(account);
+        var parsed = mapper.readValue(json, AccountRecord.class);
+        assertNotNull(parsed);
+        assertNotNull(parsed.resources());
+        assertTrue(parsed.resources().links().include("example:link"));
+    }
+
 }
