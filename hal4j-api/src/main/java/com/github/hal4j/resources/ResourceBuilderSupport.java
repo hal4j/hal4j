@@ -7,13 +7,14 @@ import com.github.hal4j.uritemplate.URITemplate;
 import java.net.URI;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.hal4j.resources.curie.CurieResolver.REL_CURIES;
 import static com.github.hal4j.resources.HALLink.REL_SELF;
+import static com.github.hal4j.resources.curie.CurieResolver.REL_CURIES;
 import static java.util.Arrays.asList;
 
 public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
@@ -31,6 +32,7 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
     protected ResourceBuilderSupport(CurieResolver resolver) {
         this.resolver = resolver;
     }
+
 
     protected abstract B _this();
 
@@ -62,14 +64,18 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
     }
 
     public ResourceBuilderContributor<R, B> when(Supplier<Boolean> condition) {
-        return new ResourceBuilderContributor<>((B) this, condition);
+        return new ResourceBuilderContributor<>(_this(), condition);
+    }
+
+    public ResourceBuilderContributor<R, B> when(boolean condition) {
+        return new ResourceBuilderContributor<>(_this(), () -> condition);
     }
 
     public B add(ResourceRelation... relations) {
         for (ResourceRelation relation : relations) {
             this.link(relation.name()).to(relation.link());
         }
-        return (B) this;
+        return _this();
     }
 
     public Linker linkSelf() {
@@ -116,6 +122,36 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         return _this();
     }
 
+    /**
+     * Embeds given collection as resources, omitting curie link at item level. All curie namespaces discovered in items
+     * will be included in the curie link of the parent resource.
+     * Returns the function accepting the custom build code and returning this builder.
+     * @param rel name of the relationship for the embedded resources
+     * @param objects objects to be embedded as resources
+     * @return a function that performs the final step of building the embedded resources and returns this builder.
+     * @param <T> type of embedded objects
+     */
+    public <T> Function<Function<ResourceBuilder<T>, Resource<T>>, B> embedResources(URI rel, Collection<T> objects) {
+        resolve(rel);
+        List<Object> existing = this.embedded().computeIfAbsent(rel.toString(), any -> new ArrayList<>());
+        existing.addAll(objects);
+        return build -> {
+            CurieResolver childResolver = ns -> {
+                if (resolvedNamespaces == null) {
+                    resolvedNamespaces = new HashSet<>();
+                }
+                resolvedNamespaces.add(ns);
+                return null;
+            };
+            var resources = objects.stream()
+                    .map(object -> new ResourceBuilder<>(object, childResolver).in(context))
+                    .map(build)
+                    .toList();
+            existing.addAll(resources);
+            return _this();
+        };
+    }
+
     private void resolve(URI uri) {
         if (uri == null) {
             throw new NullPointerException("uri");
@@ -156,7 +192,7 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         return _this();
     }
 
-    public class ResourceBuilderContributor<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
+    public static class ResourceBuilderContributor<R extends ResourceSupport, B extends ResourceBuilderSupport<R, B>> {
 
 
         private final B builder;

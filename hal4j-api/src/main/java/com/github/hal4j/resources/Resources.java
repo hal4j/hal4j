@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class Resources<T> extends ResourceSupport {
+public final class Resources<T> extends ResourceSupport implements ResourceCollection<T, Resource<T>> {
 
     private final Class<T> elementType;
 
@@ -36,40 +36,50 @@ public final class Resources<T> extends ResourceSupport {
     @SuppressWarnings("unchecked")
     private static Map<String, List<Object>> merge(Map<String, List<Object>> attachments, List<?> collection) {
         Map<String, List<Object>> result = attachments != null ? new HashMap<>(attachments) : new HashMap<>();
-        result.put(HALLink.REL_ITEMS, (List) collection);
+        result.put(REL_ITEMS, (List) collection);
         return result;
+    }
+
+    @Override
+    public Class<T> type() {
+        return elementType;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Stream<Resource<T>> resources() {
+        return embedded().selectAll(REL_ITEMS)
+                .map(item -> item instanceof Resource
+                        ? (Resource<T>) item
+                        : context().bindResource(item, type()));
+    }
+
+    @Override
+    public Stream<T> values() {
+        return stream().map(Resource::value);
     }
 
     public List<Resource<T>> items() {
         return stream().collect(Collectors.toList());
     }
 
-    public int size() {
-        return embedded().count(HALLink.REL_ITEMS);
-    }
-
-    public Stream<T> values() {
-        return stream().map(Resource::value);
-    }
-
+    @Deprecated
     @SuppressWarnings("unchecked")
     public Stream<Resource<T>> stream() {
-        return embedded().selectAll(HALLink.REL_ITEMS)
-                .map(item -> item instanceof Resource
-                        ? (Resource<T>) item
-                        : context().bindResource(item, type()));
+        return resources();
     }
 
     public void forEachResource(Consumer<? super Resource<T>> consumer) {
-        stream().forEach(consumer);
+        resources().forEach(consumer);
     }
 
     public void forEach(Consumer<? super T> consumer) {
-        stream().map(Resource::value).forEach(consumer);
+        values().forEach(consumer);
     }
 
-    public Class<T> type() {
-        return elementType;
+    @Override
+    public String toString() {
+        return "Resources('" + self() + "': " + size() + ' ' + type().getSimpleName() + " items)";
     }
 
 }

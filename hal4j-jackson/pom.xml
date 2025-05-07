@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.hal4j</groupId>
         <artifactId>hal4j-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.1-SNAPSHOT</version>
 	</parent>
 
     <artifactId>hal4j-jackson</artifactId>
@@ -14,7 +14,7 @@
     <description>Jackson data binding for HAL</description>
 
     <properties>
-        <jackson.version>2.17.0</jackson.version>
+        <jackson.version>2.19.0</jackson.version>
     </properties>
 
     <dependencies>

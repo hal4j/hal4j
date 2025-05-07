@@ -53,4 +53,6 @@ public class NavigationResourceTest {
         assertNotNull(entry);
         assertTrue(entry.links().include("example:link"));
     }
+
+
 }

@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
  * Core implementation of all resources which defines all HAL contracts and data model.
  *
  */
-public abstract class ResourceSupport implements Serializable {
+public abstract class ResourceSupport implements Serializable, ResourceObject {
 
     private final BindingContext context;
 
@@ -25,11 +25,11 @@ public abstract class ResourceSupport implements Serializable {
 
     private final Map<String, List<Object>> _embedded;
 
-    ResourceSupport(ResourceSupport resource) {
+    protected ResourceSupport(ResourceSupport resource) {
         this(resource._links, resource._embedded, resource.context);
     }
 
-    ResourceSupport(Map<String, List<HALLink>> _links,
+    protected ResourceSupport(Map<String, List<HALLink>> _links,
                     Map<String, List<Object>> _embedded,
                     BindingContext context) {
         this._links = _links != null && !_links.isEmpty() ? clone(_links) : null;
@@ -104,6 +104,7 @@ public abstract class ResourceSupport implements Serializable {
      * @return the <code>self</code> link
      * @throws MissingLinkException if resource does not contain <code>self</code> link
      */
+    @Override
     public URI self() {
         if (this.self == null) {
             throw new MissingLinkException(REL_SELF);
@@ -115,44 +116,38 @@ public abstract class ResourceSupport implements Serializable {
      * Returns collection of the links associated with this resource
      * @return non-null collection of the links associated with this resource
      */
+    @Override
     public Links links() {
-        return new Links();
+        return new LinksImpl();
     }
 
     /**
      * Returns collection of the embedded objects included with this resource
      * @return non-null collection  of the embedded objects included with this resource
      */
+    @Override
     public EmbeddedObjects embedded() {
-        return new EmbeddedObjects();
+        return new EmbeddedObjectsImpl();
     }
 
     /**
      * Common query operations for links and embedded objects
      * @param <T> type of object (link or embedded)
      */
-    public abstract class MetadataElements<T> {
+    public static abstract class MetadataElementMap<T> implements MetadataElements<T> {
 
         private final Map<String, List<T>> map;
 
-        private MetadataElements(Map<String, List<T>> map) {
+        private MetadataElementMap(Map<String, List<T>> map) {
             this.map = map;
         }
 
-        /**
-         * Returns underlying objects "as is", i.e. as a Map with relation keys and lists of objects.
-         * May return <code>null</code>.
-         * @return the underlying map or <code>null</code>
-         */
+        @Override
         public Map<String, List<T>> asIs() {
             return this.map;
         }
 
-        /**
-         * Return all items with given relation
-         * @param rel name of relation
-         * @return list of items or empty list
-         */
+        @Override
         public List<T> findAll(String rel) {
             if (rel == null) {
                 throw new NullPointerException("Relation name cannot be null");
@@ -162,84 +157,54 @@ public abstract class ResourceSupport implements Serializable {
                     .orElse(emptyList());
         }
 
-        /**
-         * Return all items with given relation
-         * @param rel name of relation as URI
-         * @return list of items or empty list
-         */
+        @Override
         public List<T> findAll(URI rel) {
             return findAll(rel.toString());
         }
 
-        /**
-         * Return any of the items with given relation
-         * @param rel name of relation as URI
-         * @return any found item or empty Optional
-         */
+        @Override
         public Optional<T> find(URI rel) {
             return findAll(rel).stream().findAny();
         }
 
-        /**
-         * Return any of the items with given relation
-         * @param rel name of relation
-         * @return any found item or empty Optional
-         */
+        @Override
         public Optional<T> find(String rel) {
             return findAll(rel).stream().findAny();
         }
 
-        /**
-         * Checks if any item with given relation is present
-         * @param rel name of relation as URI
-         * @return <code>true</code> if such relation exists, <code>false</code> otherwise.
-         */
+        @Override
         public boolean include(URI rel) {
             return ofNullable(map)
                     .map(m -> m.containsKey(rel.toString()))
                     .orElse(false);
         }
 
-        /**
-         * Checks if any item with given relation is present
-         * @param rel name of relation
-         * @return <code>true</code> if such relation exists, <code>false</code> otherwise.
-         */
+        @Override
         public boolean include(String rel) {
             return this.include(URI.create(rel));
         }
 
-        /**
-         * Count number of items with given relation
-         * @param rel name of relation
-         * @return number of items or 0 if relation does not exist in this resource.
-         */
+        @Override
         public int count(String rel) {
             return this.findAll(rel).size();
         }
 
-        /**
-         * Count number of items with given relation
-         * @param rel name of relation as URI
-         * @return number of items or 0 if relation does not exist in this resource.
-         */
+        @Override
         public int count(URI rel) {
             return this.findAll(rel).size();
         }
 
+        @Override
         public Stream<T> selectAll(String uri) {
             return this.findAll(uri).stream();
         }
 
+        @Override
         public Stream<T> selectAll(URI uri) {
             return this.findAll(uri).stream();
         }
 
-        /**
-         * Returns underlying objects as a Map with relation keys and lists of objects.
-         * If underlying map is <code>null</code>, returns empty map.
-         * @return the underlying map or empty map
-         */
+        @Override
         public Map<String, List<T>> all() {
             return ofNullable(map).orElse(emptyMap());
         }
@@ -248,47 +213,28 @@ public abstract class ResourceSupport implements Serializable {
     /**
      * Wrapper for the collection of links providing convenience methods for querying them
      */
-    public class Links extends MetadataElements<HALLink> {
+    public class LinksImpl extends MetadataElementMap<HALLink> implements Links {
 
-        Links() {
+        LinksImpl() {
             super(_links);
         }
 
-        /**
-         * Checks if there's at least one link with given relation and name
-         * @param rel name of relation
-         * @param name name of the link (see {@link HALLink#name})
-         * @return <code>true</code> if such link exists, <code>false</code> otherwise.
-         */
+        @Override
         public boolean include(String rel, String name) {
             return findAll(rel).stream().anyMatch(link -> name.equals(link.name));
         }
 
-        /**
-         * Finds a link with the given name of relation and resolves it to the permanent URI of resource
-         * @param rel name of relation
-         * @return Optional with the link if such link exists, <code>Optional.empty</code> otherwise.
-         */
+        @Override
         public Optional<HALLink> resolve(String rel) {
             return resolve(rel, link -> Objects.equals(null, link.name));
         }
 
-        /**
-         * Finds any matching link with given relation and name
-         * @param rel name of relation
-         * @param name name of the link (see {@link HALLink#name})
-         * @return Optional with the link if such link exists, <code>Optional.empty</code> otherwise.
-         */
+        @Override
         public Optional<HALLink> resolve(String rel, String name) {
             return resolve(rel, link -> Objects.equals(name, link.name));
         }
 
-        /**
-         * Finds any link with given relation that matches given condition
-         * @param rel name of relation
-         * @param condition the condition to match
-         * @return Optional with the link if such link exists, <code>Optional.empty</code> otherwise.
-         */
+        @Override
         public Optional<HALLink> resolve(String rel, Predicate<HALLink> condition) {
             List<HALLink> links = findAll(rel);
             if (links.isEmpty()) {
@@ -324,66 +270,43 @@ public abstract class ResourceSupport implements Serializable {
     /**
      * Wrapper for the collection of embedded objects providing convenience methods for querying them
      */
-    public class EmbeddedObjects extends MetadataElements<Object> {
+    public class EmbeddedObjectsImpl extends MetadataElementMap<Object> implements EmbeddedObjects {
 
-        EmbeddedObjects() {
+        EmbeddedObjectsImpl() {
             super(_embedded);
         }
 
-        /**
-         * Find an embedded object with given relation
-         * and return the search result as an object of given type, if any found.
-         * @param rel relation of searched object
-         * @param type the class object used as a metamodel for mapping
-         * @param <T> the type of the expected result
-         * @return search result as an Optional
-         */
+        @Override
         public <T> Optional<T> find(String rel, Class<T> type) {
             return find(rel).map(item -> context().bind(item, type));
         }
 
-        /**
-         * Find an embedded object with given relation and return the search result
-         * as a resource of given type if any found.
-         * @param rel relation of searched object
-         * @param type the class object used as a metamodel for mapping
-         * @param <T> the type of the expected result
-         * @return search result as an Optional
-         */
+        @Override
         public <T> Optional<Resource<T>> findResource(String rel, Class<T> type) {
             return find(rel).map(item -> context().bind(item, GenericResource.class))
                     .map(resource -> resource.as(type));
         }
 
-        /**
-         * Find a collection of embedded objects with given relation and return
-         * the search results as objects of given type, if any found.
-         * @param rel relation of searched objects
-         * @param type the class object used as a metamodel for mapping
-         * @param <T> the type of the expected results
-         * @return search result as a List of objects
-         */
+        @Override
         public <T>  List<T> findAll(String rel, Class<T> type) {
             return findAll(rel).stream()
                     .map(item -> context().bind(item, type))
-                    .collect(toList());
+                    .toList();
         }
 
-        /**
-         * Find a collection of embedded objects with given relation and return
-         * the search results as resources of given type
-         * @param rel relation of searched objects
-         * @param type the class object used as a metamodel for mapping
-         * @param <T> the type of the expected results
-         * @return search result as a List of objects
-         */
+        @Override
         public <T>  List<Resource<T>> findResources(String rel, Class<T> type) {
             return findAll(rel).stream()
                     .map(item -> context().bind(item, GenericResource.class))
                     .map(resource -> resource.as(type))
-                    .collect(toList());
+                    .toList();
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "ResourceObject('" + self() + "')";
     }
 
 }

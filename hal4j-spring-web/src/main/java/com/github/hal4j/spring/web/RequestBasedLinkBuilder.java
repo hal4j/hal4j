@@ -9,6 +9,16 @@ public class RequestBasedLinkBuilder extends SpringWebLinkBuilder {
         return new RequestBasedLinkBuilder();
     }
 
+    /**
+     * Convenience method to create a request-based link to a REST controller with a some additional path segments
+     * @param controllerClass the class of the REST controller to bind to
+     * @param pathSegments additional path segments used in mapping of specific methods
+     * @return a URI builder for a link to the given REST controller
+     */
+    public static URIBuilder endpoint(Class<?> controllerClass, Object... pathSegments) {
+        return new RequestBasedLinkBuilder().to(controllerClass).path().append(pathSegments);
+    }
+
     private RequestBasedLinkBuilder() {
         super();
     }

@@ -3,7 +3,6 @@ package com.github.hal4j.resources;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 

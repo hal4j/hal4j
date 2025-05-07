@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.github.hal4j</groupId>
 		<artifactId>hal4j-parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.2.1-SNAPSHOT</version>
 	</parent>
 
     <artifactId>hal4j-spring-web</artifactId>
@@ -14,9 +14,9 @@
     <description>HAL - Integration with Spring Framework (WebMVC)</description>
 
     <properties>
-        <springframework.version>6.1.5</springframework.version>
-        <spring-boot.version>3.2.4</spring-boot.version>
-        <servlet-api.version>6.0.0</servlet-api.version>
+        <springframework.version>6.2.6</springframework.version>
+        <spring-boot.version>3.4.5</spring-boot.version>
+        <servlet-api.version>6.1.0</servlet-api.version>
     </properties>
 
 

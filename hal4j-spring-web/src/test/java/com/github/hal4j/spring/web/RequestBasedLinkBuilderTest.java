@@ -20,7 +20,7 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForHttpsRequestToLocalhost() {
-        String originalURI = "https://localhost:8443/api/v1/resources/recent";
+        String originalURI = "https://localhost:8443/api/v1/users/recent";
         HttpServletRequest request = givenRequested(get(originalURI), "/");
         assertNotNull(request);
         assertEquals(originalURI, link().to(UsersController.class).relative("recent").toString());
@@ -29,7 +29,7 @@ class RequestBasedLinkBuilderTest {
     @Test
     void shouldBuildCorrectTemplateLinkForHttpsRequestToLocalhost() {
         UUID uuid = UUID.randomUUID();
-        String originalURI = "https://localhost:8443/api/v1/resources/" + uuid + "/status";
+        String originalURI = "https://localhost:8443/api/v1/users/" + uuid + "/status";
         HttpServletRequest request = givenRequested(get(originalURI), "/");
         assertNotNull(request);
         assertEquals(originalURI, link().to(UserController.class).relative("status").asTemplate().expand(uuid).toString());
@@ -37,8 +37,8 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedRequestProxy() {
-        String originalURI = "https://api.example.com:8443/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("https://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "https://api.example.com:8443/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("https://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com:8443"), "/");
         assertNotNull(request);
         assertEquals(originalURI, link().to(UsersController.class).relative("recent").toString());
@@ -46,8 +46,8 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestLB() {
-        String originalURI = "https://api.example.com/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1/api/v1/resources/recent")
+        String originalURI = "https://api.example.com/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https"), "/");
         request.setServerPort(-1); // workaround for a bug in MockHttpServletRequestBuilder (wrong default port for https)
@@ -57,8 +57,8 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestZuul() {
-        String originalURI = "https://api.example.com/serv/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "https://api.example.com/serv/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");
@@ -68,8 +68,8 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldBuildCorrectLinkForForwardedHttpsToHttpRequestZuulAlternativePort() {
-        String originalURI = "https://api.example.com:8443/serv/api/v1/resources/recent";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources/recent")
+        String originalURI = "https://api.example.com:8443/serv/api/v1/users/recent";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users/recent")
                 .header("X-Forwarded-Host", "api.example.com:8443")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");
@@ -79,8 +79,8 @@ class RequestBasedLinkBuilderTest {
 
     @Test
     void shouldRenderMatrixVariables() {
-        String originalURI = "https://api.example.com/serv/api/v1/resources/{id}{;tag}/meta";
-        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/resources")
+        String originalURI = "https://api.example.com/serv/api/v1/users/{id}{;tag}/meta";
+        MockHttpServletRequest request = givenRequested(get("http://192.168.1.1:8480/api/v1/users")
                 .header("X-Forwarded-Host", "api.example.com")
                 .header("X-Forwarded-Proto", "https")
                 .header("X-Forwarded-Prefix", "/serv"), "/");

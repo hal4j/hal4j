@@ -10,10 +10,10 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 
 /**
- * Immutable wrapper of an object of given type (resource model) including the HAL model metadata (links and embedded objects).
+ * Immutable wrapper of an object with the given type (resource model) including the HAL model metadata (links and embedded objects).
  *
- * Note that this class cannot be deserialized directly by Jackson
- * (there's no support for JsonUnwrapped/JsonCreator combination).
+ * Note that Jackson cannot deserialize this class directly (there's no support for JsonUnwrapped/JsonCreator combination):
+ * if JSON deserialization is used, include a corresponding dependency.
  * @param <T> type of the model wrapped in this resource
  */
 public final class Resource<T> extends ResourceSupport {
@@ -21,7 +21,7 @@ public final class Resource<T> extends ResourceSupport {
     public final T model;
 
     /**
-     * Create a resource with given model, links and embedded objects. Any of them can be <code>null</code>.
+     * Create a resource with the given model, links and embedded objects. Any of them can be <code>null</code>.
      * @param model the resource model
      * @param _links the HAL links
      * @param _embedded the embedded objects.
@@ -34,7 +34,7 @@ public final class Resource<T> extends ResourceSupport {
     }
 
     /**
-     * Create a resource with given model, links and embedded objects. Any of them can be <code>null</code>.
+     * Create a resource with the given model, links and embedded objects. Any of them can be <code>null</code>.
      * The binding context can be used to transform embedded objects into typed resources.
      * @param model the resource model
      * @param _links the HAL links
@@ -51,7 +51,7 @@ public final class Resource<T> extends ResourceSupport {
     }
 
     /**
-     * Create a simple resource with given model and <code>self</code> link.
+     * Create a simple resource with the given model and <code>self</code> link.
      * @param model the resource model
      * @param self the permalink to this object (link with rel <code>self</code>)
      */
@@ -61,7 +61,7 @@ public final class Resource<T> extends ResourceSupport {
     }
 
     /**
-     * Create a resource with given model and copy of the links and embedded objects taken from given source.
+     * Create a resource with the given model and copy of the links and embedded objects taken from given source.
      * @param source original resource object from which the links and objects will be taken.
      * @param model the resource model
      */
@@ -71,7 +71,7 @@ public final class Resource<T> extends ResourceSupport {
     }
 
     /**
-     * Returns the value of resource model as is even if it is <code>null</code>
+     * Returns the value of the resource model as is even if it is <code>null</code>
      * @return the resource model or <code>null</code>
      */
     public T value() {

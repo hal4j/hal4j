@@ -9,7 +9,7 @@ import java.util.Map;
 public final class NavigationResource extends ResourceSupport {
 
     NavigationResource(Map<String, List<HALLink>> _links,
-                              Map<String, List<Object>> _embedded) {
+                       Map<String, List<Object>> _embedded) {
         super(_links, _embedded, null);
     }
 

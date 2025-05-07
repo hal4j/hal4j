@@ -2,7 +2,6 @@ package com.github.hal4j.resources.test.examples;
 
 import com.github.hal4j.resources.*;
 import com.github.hal4j.resources.test.model.UserProfile;
-import com.github.hal4j.uritemplate.URIBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;

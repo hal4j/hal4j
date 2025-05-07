@@ -54,7 +54,7 @@ public final class GenericResource extends ResourceSupport {
      */
     @SuppressWarnings("unchecked")
     public <T> Resources<T> asCollectionOf(Class<T> clazz) {
-        List<Object> attachment = this.embedded().findAll(HALLink.REL_ITEMS);
+        List<Object> attachment = this.embedded().findAll(ResourceCollection.REL_ITEMS);
         List<Resource<T>> resources = attachment.stream()
                 .map(object -> context().bind(object, GenericResource.class))
                 .map(resource -> resource.as(clazz))
