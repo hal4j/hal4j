@@ -33,6 +33,7 @@ public abstract class ResourceBuilderSupport<R extends ResourceSupport, B extend
         this.resolver = resolver;
     }
 
+
     protected abstract B _this();
 
     public final R asResource() {

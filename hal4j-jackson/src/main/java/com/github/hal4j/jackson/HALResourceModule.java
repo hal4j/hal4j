@@ -15,6 +15,7 @@ public class HALResourceModule extends SimpleModule {
         setMixInAnnotation(NavigationResource.class, NavigationResourceMixin.class);
         setMixInAnnotation(Resource.class, ResourceMixin.class);
         setMixInAnnotation(Resources.class, ResourcesMixin.class);
+        setMixInAnnotation(ResourceList.class, ResourceListMixin.class);
         setMixInAnnotation(HALLink.class, HALLinkMixin.class);
     }
 

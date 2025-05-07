@@ -9,6 +9,8 @@ public interface ResourceFactory {
 
     <T> ResourceBuilder<T> bind(T object);
 
+    <M, VM extends ResourceViewModel> ResourceListBuilder<M, VM> bind(Class<VM> elementType, Collection<M> objects);
+
     <T extends ResourceSupport, B extends ResourceBuilderSupport<T, B>> B bind(Function<CurieResolver, B> builder);
 
     <T> ResourcesBuilder<T> bindAll(Class<T> elementType, Collection<T> objects);

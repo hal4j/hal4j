@@ -13,7 +13,21 @@ public final class ResourceRelation {
         this.link = link;
     }
 
+    /**
+     * @deprecated will be removed in v2.0 to avoid name conflict with link builders, use {@link #rel(String, HALLinkBuilder)} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static ResourceRelation link(String name, HALLinkBuilder link) {
+        return rel(name, link);
+    }
+
+    /**
+     * Create new resource relation with given name and link
+     * @param name name of the relation
+     * @param link the HAL link to the resource
+     * @return new ResourceRelation for use in {@link ResourceBuilderSupport#add} method
+     */
+    public static ResourceRelation rel(String name, HALLinkBuilder link) {
         return new ResourceRelation(name, link.build());
     }
 
@@ -40,7 +54,7 @@ public final class ResourceRelation {
 
     @Override
     public String toString() {
-        return rel + " -> " + link;
+        return rel + " : " + link;
     }
 
 }

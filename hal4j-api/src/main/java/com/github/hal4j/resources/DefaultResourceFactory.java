@@ -30,6 +30,11 @@ public class DefaultResourceFactory implements ResourceFactory {
     }
 
     @Override
+    public <M, VM extends ResourceViewModel> ResourceListBuilder<M, VM> bind(Class<VM> elementType, Collection<M> objects) {
+        return new ResourceListBuilder<>(elementType, objects, resolver, this);
+    }
+
+    @Override
     public <T extends ResourceSupport, B extends ResourceBuilderSupport<T, B>> B bind(Function<CurieResolver, B> builder) {
         return builder.apply(resolver).in(context);
     }

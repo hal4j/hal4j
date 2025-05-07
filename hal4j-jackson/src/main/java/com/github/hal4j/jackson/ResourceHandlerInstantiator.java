@@ -20,11 +20,15 @@ public class ResourceHandlerInstantiator extends HandlerInstantiator {
     public JsonDeserializer<?> deserializerInstance(DeserializationConfig config,
                                                     Annotated annotated,
                                                     Class<?> deserClass) {
-        if (ResourcesDeserializer.class.isAssignableFrom(deserClass)) {
+        if (ResourceListDeserializer.class.isAssignableFrom(deserClass)) {
+            TypeBindings bindings = annotated.getType().getBindings();
+            JavaType modelType = bindings.getTypeParameters().get(0);
+            return new ResourceListDeserializer(modelType);
+        } else if (ResourcesDeserializer.class.isAssignableFrom(deserClass)) {
             TypeBindings bindings = annotated.getType().getBindings();
             JavaType modelType = bindings.getTypeParameters().get(0);
             return new ResourcesDeserializer(modelType);
-        }else if (ResourceDeserializer.class.isAssignableFrom(deserClass)) {
+        } else if (ResourceDeserializer.class.isAssignableFrom(deserClass)) {
             TypeBindings bindings = annotated.getType().getBindings();
             JavaType modelType = bindings.getTypeParameters().get(0);
             return new ResourceDeserializer(modelType);

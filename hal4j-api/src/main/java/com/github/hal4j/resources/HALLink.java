@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -16,6 +17,11 @@ public class HALLink implements Serializable {
     public static final String REL_NEXT = "next";
     public static final String REL_PREV = "prev";
     public static final String REL_PAGE = "page";
+
+    /**
+     * @deprecated will be removed in v2.0, use ResourceCollection.REL_ITEMS instead
+     */
+    @Deprecated(forRemoval = true)
     public static final String REL_ITEMS = "items";
 
     public static final String PARAM_EXPAND = "expand";
@@ -86,6 +92,7 @@ public class HALLink implements Serializable {
                    String hreflang,
                    URI profile,
                    URI deprecation) {
+        if (href == null) throw new IllegalArgumentException("href must not be null");
         if (!templated) {
             try {
                 new URI(href);
@@ -112,6 +119,7 @@ public class HALLink implements Serializable {
                    String hreflang,
                    URI profile,
                    URI deprecation) {
+        if (href == null) throw new IllegalArgumentException("href must not be null");
         this.href = href;
         this.templated = templated;
         this.title = title;
@@ -248,4 +256,30 @@ public class HALLink implements Serializable {
         return new HALLink(src.href, src.templated, title, name, type, hreflang, profile, deprecation);
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof HALLink halLink)) return false;
+
+        return href.equals(halLink.href) && Objects.equals(profile, halLink.profile);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = href.hashCode();
+        result = 31 * result + Objects.hashCode(profile);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "{ href : '" + href + '\'' +
+                (hreflang != null ? ", hreflang : '" + hreflang + '\'' : "") +
+                (templated ? ", templated : " + templated : "") +
+                (name != null ? ", name : '" + name + '\'' : "") +
+                (title != null ? ", title : '" + title + '\'' : "") +
+                (type != null ? ", type : '" + type + '\'' : "") +
+                (profile != null ? ", profile : " + profile : "")+
+                (deprecation != null  ? ", deprecation : " + deprecation : "") +
+                " }";
+    }
 }
