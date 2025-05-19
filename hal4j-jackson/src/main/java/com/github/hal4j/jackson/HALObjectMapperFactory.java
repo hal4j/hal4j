@@ -20,7 +20,9 @@ public final class HALObjectMapperFactory {
         mapper.findAndRegisterModules();
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.ALWAYS);
-        mapper.setInjectableValues(new InjectableValues.Std().addValue("mapper", mapper));
+        mapper.setInjectableValues(new InjectableValues.Std()
+                .addValue("mapper", mapper)
+                .addValue("context", new JacksonBindingContext(mapper)));
         return mapper;
     }
 

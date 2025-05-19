@@ -1,6 +1,6 @@
 package com.github.hal4j.jackson;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +30,7 @@ import java.util.function.Function;
  * This solution is useful in the MVVM pattern, where a domain-specific view model (accounts and user profiles in the
  * example above) aggregates both data and hyperlinks.
  */
+//@JsonDeserialize(using = EmbeddedResourcesDeserializer.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmbeddedResources extends ResourceSupport {
 
@@ -64,10 +65,9 @@ public class EmbeddedResources extends ResourceSupport {
         return Builder::new;
     }
 
-    @JsonCreator
     public EmbeddedResources(@JsonProperty("_links") Map<String, List<HALLink>> _links,
                              @JsonProperty("_embedded") Map<String, List<Object>> _embedded,
-                             BindingContext context) {
+                             @JacksonInject("context") BindingContext context) {
         super(_links, _embedded, context);
     }
 

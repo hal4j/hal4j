@@ -26,7 +26,7 @@ public class JacksonBindingContext implements BindingContext {
             JsonNode tree = mapper.valueToTree(value);
             return mapper.treeToValue(tree, targetType);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Cannot parse value to " + targetType);
+            throw new IllegalStateException("Cannot parse value to " + targetType, e);
         }
     }
 
